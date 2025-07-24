@@ -10,7 +10,7 @@ const pages = [
   [text, text],
 ];
 
-export default function MalinKundang() {
+export default function ceritaPage() {
   const [pageIndex, setPageIndex] = useState(0);
 
   const handleNext = () => {

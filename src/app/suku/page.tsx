@@ -27,7 +27,7 @@ export default function page() {
     { title: "Tari Tradisional", linkto: "suku/tari-tradisional", Icon: PersonStanding },
     { title: "Baju Tradisional", linkto: "suku/baju-tradisional", Icon: Shirt },
     { title: "Rumah Adat", linkto: "suku/rumah-adat", Icon: Home },
-    { title: "Cerita Daerah", linkto: "suku/cerita-daerah", Icon: BookOpen },
+    { title: "Cerita Rakyat", linkto: "suku/cerita-rakyat", Icon: BookOpen },
     { title: "Tradisi", linkto: "suku/tradisi", Icon: Palmtree },
   ];
 

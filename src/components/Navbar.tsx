@@ -14,7 +14,7 @@ async function Navbar() {
                 <Link 
                     href="/"
                     className="text-xl font-bold text-primary font-mono tracking-wider">
-                        🌱 Plantventory
+                        Traditia
                 </Link>
             </div>
 

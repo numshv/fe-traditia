@@ -6,7 +6,6 @@ import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import type { FeatureCollection, Feature } from "geojson";
 
-// Fix untuk icon default Leaflet di Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -61,6 +60,14 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
   const [selectedGeoFeature, setSelectedGeoFeature] = useState<Feature | null>(null);
   const [selectedLayer, setSelectedLayer] = useState<L.Layer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [openAccordion, setOpenAccordion] = useState<string | null>('suku');
+
+  const dummySukuData = [
+    { name: "Arfak" }, { name: "Dani" }, { name: "Asmat" },
+    { name: "Bauzi" }, { name: "Sentani" }, { name: "Biak" },
+  ];
+  const dummyLandmarkData = [ { name: "Raja Ampat" }, { name: "Lembah Baliem" } ];
 
   useEffect(() => {
     if (onFocusChange) {
@@ -138,6 +145,12 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
     }
   };
 
+  // useEffect(() => {
+  //   fetchGeoData();
+  // }, []);
+  
+  // if (isLoading) { return ( /* ... kode loading state tetap sama ... */ ); }
+
   useEffect(() => {
     fetchGeoData();
   }, []);
@@ -179,34 +192,73 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
       </div>
 
       {selectedGeoFeature && (
-        <div className="w-1/2 h-full p-6 overflow-auto bg-gray-900 relative transition-all duration-500 border-0">
+        <div className="w-1/2 h-full p-8 overflow-y-auto relative transition-all duration-500">
           <button
             onClick={() => {
               if (selectedLayer) {
-                // UBAH: Reset ke warna hitam
                 (selectedLayer as L.Path).setStyle({ fillColor: "#000000", weight: 1, color: "#555" });
               }
               setSelectedGeoFeature(null);
               setSelectedLayer(null);
             }}
-            className="absolute top-4 right-4 text-white text-xl font-bold hover:text-red-400 transition-colors"
+            className="absolute top-8 right-8 z-10 text-current text-2xl font-bold hover:opacity-70 transition-opacity"
             title="Close"
-          >
-            &times;
-          </button>
+          >&times;</button>
 
-          <h2 className="text-2xl font-bold mb-4">Provinsi Terpilih:</h2>
-          <div className="mt-6">
-            <h3 className="text-xl font-bold mb-2">Provinsi:</h3>
-            <div className="bg-gray-800 p-4 rounded">
-              <span className="text-lg">
-                {(selectedGeoFeature.properties as ProvinceProperties)?.state || "N/A"}
-              </span>
+          <h1 className="text-5xl font-bold mb-8 text-[#392514]">
+            {(selectedGeoFeature.properties as ProvinceProperties)?.state || "Provinsi"}
+          </h1>
+
+          {/* Implementasi Accordion manual */}
+          <div className="w-full flex flex-col gap-4">
+            {/* Accordion Item: Suku */}
+            <div className="border border-black px-4 rounded-sm">
+              <button
+                onClick={() => setOpenAccordion(openAccordion === 'suku' ? null : 'suku')}
+                className="w-full flex justify-between items-center text-xl py-4 font-semibold text-left text-[#392514]"
+              >
+                Suku
+                <span className={`transition-transform duration-300 ${openAccordion === 'suku' ? 'rotate-180' : ''}`}>▼</span>
+              </button>
+              <div className={`overflow-hidden transition-all duration-500 ease-in-out ${openAccordion === 'suku' ? 'max-h-[999px]' : 'max-h-0'}`}>
+                <div className="grid grid-cols-2 gap-4 py-4">
+                  {dummySukuData.map((suku) => (
+                    <div key={suku.name} className="relative aspect-video rounded-lg overflow-hidden group cursor-pointer">
+                      <div className="w-full h-full bg-gray-400 group-hover:scale-110 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute bottom-0 left-0 p-3">
+                        <span className="text-white font-bold text-lg">{suku.name}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Accordion Item: Landmark */}
+            <div className="border border-black px-4 rounded-sm">
+              <button
+                onClick={() => setOpenAccordion(openAccordion === 'landmark' ? null : 'landmark')}
+                className="w-full flex justify-between items-center text-xl py-4 font-semibold text-left text-[#392514]"
+              >
+                Landmark
+                <span className={`transition-transform duration-300 ${openAccordion === 'landmark' ? 'rotate-180' : ''}`}>▼</span>
+              </button>
+              <div className={`overflow-hidden transition-all duration-500 ease-in-out ${openAccordion === 'landmark' ? 'max-h-[999px]' : 'max-h-0'}`}>
+                <div className="grid grid-cols-2 gap-4 py-4">
+                  {dummyLandmarkData.map((landmark) => (
+                    <div key={landmark.name} className="relative aspect-video rounded-lg overflow-hidden group cursor-pointer">
+                      <div className="w-full h-full bg-gray-400 group-hover:scale-110 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute bottom-0 left-0 p-3">
+                        <span className="text-white font-bold text-lg">{landmark.name}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Bagian konten kosong */}
-
         </div>
       )}
     </div>

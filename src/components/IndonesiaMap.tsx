@@ -52,14 +52,21 @@ function ZoomableGeoJSON({ data, onEachFeature, geoJsonRef, selectedFeature }: Z
 
 interface IndonesiaMapProps {
   onProvinceStats?: (data: { areaName: string; areaCommodity: string[] }) => void;
+  onFocusChange?: (isFocused: boolean) => void;
 }
 
-export default function IndonesiaMap({ onProvinceStats }: IndonesiaMapProps) {
+export default function IndonesiaMap({ onProvinceStats, onFocusChange }: IndonesiaMapProps) {
   const [geoData, setGeoData] = useState<FeatureCollection | null>(null);
   const geoJsonRef = useRef<L.GeoJSON | null>(null);
   const [selectedGeoFeature, setSelectedGeoFeature] = useState<Feature | null>(null);
   const [selectedLayer, setSelectedLayer] = useState<L.Layer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (onFocusChange) {
+      onFocusChange(!!selectedGeoFeature); 
+    }
+  }, [selectedGeoFeature, onFocusChange]);
 
   const fetchGeoData = async () => {
     try {

@@ -61,7 +61,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
   const [selectedLayer, setSelectedLayer] = useState<L.Layer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [openAccordion, setOpenAccordion] = useState<string | null>('suku');
+  const [openAccordion, setOpenAccordion] = useState<'suku' | 'landmark'>('suku');
 
   const dummySukuData = [
     { name: "Arfak" }, { name: "Dani" }, { name: "Asmat" },
@@ -74,6 +74,14 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
       onFocusChange(!!selectedGeoFeature); 
     }
   }, [selectedGeoFeature, onFocusChange]);
+
+  const handleAccordionClick = (accordionName: 'suku' | 'landmark') => {
+    if (openAccordion === accordionName) {
+      setOpenAccordion(accordionName === 'suku' ? 'landmark' : 'suku');
+    } else {
+      setOpenAccordion(accordionName);
+    }
+  };
 
   const fetchGeoData = async () => {
     try {
@@ -99,8 +107,8 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
     // UBAH: Warna highlight saat provinsi di klik
     (layer as L.Path).setStyle({
       fillColor: "#333333", // Warna abu-abu gelap saat dipilih
-      color: "#ccc",
-      weight: 2,
+      color: "#FFFFFF",
+      weight: 3,
     });
     
     setSelectedLayer(layer);
@@ -169,7 +177,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
   // UBAH: Menghapus `bg-black` dari div terluar agar menjadi transparan
   return (
     <div className={`w-full flex h-full text-white ${selectedGeoFeature ? "flex-row" : ""}`}>
-      <div className={`${selectedGeoFeature ? "w-1/2 relative" : "w-full"} h-full transition-all duration-500`}>
+      <div className={`${selectedGeoFeature ? "w-2/3 relative" : "w-full"} h-full transition-all duration-500`}>
         <MapContainer
           center={[-2, 118]}
           zoom={5}
@@ -192,7 +200,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
       </div>
 
       {selectedGeoFeature && (
-        <div className="w-1/2 h-full p-8 overflow-y-auto relative transition-all duration-500">
+        <div className="w-160 h-full p-8 overflow-y-auto relative transition-all duration-500">
           <button
             onClick={() => {
               if (selectedLayer) {
@@ -205,7 +213,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
             title="Close"
           >&times;</button>
 
-          <h1 className="text-5xl font-bold mb-8 text-[#392514]">
+          <h1 className="text-4xl font-bold mb-8 text-[#392514]">
             {(selectedGeoFeature.properties as ProvinceProperties)?.state || "Provinsi"}
           </h1>
 
@@ -214,7 +222,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
             {/* Accordion Item: Suku */}
             <div className="border border-black px-4 rounded-sm">
               <button
-                onClick={() => setOpenAccordion(openAccordion === 'suku' ? null : 'suku')}
+                onClick={() => handleAccordionClick('suku')}
                 className="w-full flex justify-between items-center text-xl py-4 font-semibold text-left text-[#392514]"
               >
                 Suku
@@ -224,9 +232,8 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
                 <div className="grid grid-cols-2 gap-4 py-4">
                   {dummySukuData.map((suku) => (
                     <div key={suku.name} className="relative aspect-video rounded-lg overflow-hidden group cursor-pointer">
-                      <div className="w-full h-full bg-gray-400 group-hover:scale-110 transition-transform duration-300" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute bottom-0 left-0 p-3">
+                      <img src="https://images.pexels.com/photos/2016121/pexels-photo-2016121.jpeg"></img>
+                      <div className="absolute bottom-0 left-0 p-3 bg-[#282828] rounded-lg w-full">
                         <span className="text-white font-bold text-lg">{suku.name}</span>
                       </div>
                     </div>
@@ -238,7 +245,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
             {/* Accordion Item: Landmark */}
             <div className="border border-black px-4 rounded-sm">
               <button
-                onClick={() => setOpenAccordion(openAccordion === 'landmark' ? null : 'landmark')}
+                onClick={() => handleAccordionClick('landmark')}
                 className="w-full flex justify-between items-center text-xl py-4 font-semibold text-left text-[#392514]"
               >
                 Landmark

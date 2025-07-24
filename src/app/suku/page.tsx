@@ -7,16 +7,17 @@ import {
   BookOpen,
   Palmtree
 } from "lucide-react";
+import Link from "next/link";
 
 export default function page() {
   const iconData = [
-    { title: "Lagu Tradisional", Icon: Music },
-    { title: "Makanan Tradisional", Icon: Utensils },
-    { title: "Tari Tradisional", Icon: PersonStanding },
-    { title: "Baju Tradisional", Icon: Shirt },
-    { title: "Rumah Adat", Icon: Home },
-    { title: "Cerita Daerah", Icon: BookOpen },
-    { title: "Tradisi", Icon: Palmtree },
+    { title: "Lagu Tradisional", linkto: "suku/lagu-tradisional", Icon: Music },
+    { title: "Makanan Tradisional", linkto: "suku/makanan-tradisional", Icon: Utensils },
+    { title: "Tari Tradisional", linkto: "suku/tari-tradisional", Icon: PersonStanding },
+    { title: "Baju Tradisional", linkto: "suku/baju-tradisional", Icon: Shirt },
+    { title: "Rumah Adat", linkto: "suku/rumah-adat", Icon: Home },
+    { title: "Cerita Daerah", linkto: "suku/cerita-daerah", Icon: BookOpen },
+    { title: "Tradisi", linkto: "suku/tradisi", Icon: Palmtree },
   ];
 
   return (
@@ -43,13 +44,14 @@ export default function page() {
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-7 gap-4">
               {iconData.map((item) => (
                 <div key={item.title} className="flex flex-col max-w-40 aspect-square bg-[#B9875D]/25 items-center justify-center text-center p-4 rounded-lg transition-transform hover:scale-105">
-                  <item.Icon className="w-10 h-10 mb-2" />
-                  {/* Pecah judul menjadi beberapa baris */}
+                  <Link href={item.linkto} className="items-center justify-center flex flex-col">
+                    <item.Icon className="w-10 h-10 mb-2" />
                   <div className="text-sm font-bold">
                     {item.title.split(' ').map((word, index) => (
                       <div key={index}>{word}</div>
                     ))}
                   </div>
+                  </Link>
                 </div>
               ))}
             </div>

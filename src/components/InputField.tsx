@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Keyboard, Search } from "lucide-react";
+import { Keyboard, Paperclip, Search } from "lucide-react";
 
 export interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
@@ -8,15 +8,14 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
     const finalClassName = `
         w-full rounded-full border-2 border-current 
         bg-transparent py-3 pl-12 pr-12 
-        text-base placeholder:text-gray-400
-        focus:outline-none focus:ring-2 focus:ring-current focus:ring-offset-2
+        text-base placeholder:text-black
         ${className || ''}
     `;
 
     return (
-      <div className="relative w-full">
+      <div className="relative w-full bg-[#B9875D]/25 rounded-full ">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-          <Keyboard className="h-5 w-5 text-gray-400" />
+          <Paperclip className="h-5 w-5 " />
         </div>
 
         <input
@@ -27,7 +26,7 @@ const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
         />
 
         <button type="button" className="absolute inset-y-0 right-0 flex items-center pr-4">
-          <Search className="h-5 w-5 text-gray-500" />
+          <Search className="h-5 w-5 " />
         </button>
       </div>
     );

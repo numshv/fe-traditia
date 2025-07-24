@@ -28,3 +28,7 @@ body {
 .leaflet-container:focus {
   outline: none;
 }
+
+.leaflet-interactive:focus {
+  outline: none;
+}

@@ -172,7 +172,7 @@ export default function IndonesiaMap({ onProvinceStats }: IndonesiaMapProps) {
       </div>
 
       {selectedGeoFeature && (
-        <div className="w-1/2 h-full p-6 overflow-auto bg-gray-900 relative transition-all duration-500">
+        <div className="w-1/2 h-full p-6 overflow-auto bg-gray-900 relative transition-all duration-500 border-0">
           <button
             onClick={() => {
               if (selectedLayer) {

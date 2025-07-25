@@ -1,3 +1,7 @@
+'use client'
+
+import { Button } from "@/components/Button";
+import ChoicePopup from "@/components/ChoicePopup";
 import {
   Music,
   Utensils,
@@ -8,6 +12,13 @@ import {
   Palmtree
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+
+interface IconDataItem {
+  title: string;
+  linkto: string;
+  Icon: React.ElementType;
+}
 
 export default function page() {
   const iconData = [
@@ -20,7 +31,16 @@ export default function page() {
     { title: "Tradisi", linkto: "suku/tradisi", Icon: Palmtree },
   ];
 
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<IconDataItem | null>(null);
+
+  const handleIconClick = (item: IconDataItem) => {
+    setSelectedItem(item);
+    setIsPopupOpen(true);
+  };
+
   return (
+    <>
     <main className="container mx-auto p-8 font-serif">
 
       <div className="mt-12 grid grid-cols-3 gap-12">
@@ -43,16 +63,14 @@ export default function page() {
             <h3 className="text-2xl font-semibold">Lihat lebih jauh</h3>
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-7 gap-4">
               {iconData.map((item) => (
-                <div key={item.title} className="flex flex-col max-w-40 aspect-square bg-[#B9875D]/25 items-center justify-center text-center p-4 rounded-lg transition-transform hover:scale-105">
-                  <Link href={item.linkto} className="items-center justify-center flex flex-col">
+                <button key={item.title} onClick={() => handleIconClick(item)} className="flex flex-col max-w-40 aspect-square bg-[#B9875D]/25 items-center justify-center text-center p-4 rounded-lg transition-transform hover:scale-105">
                     <item.Icon className="w-10 h-10 mb-2" />
                   <div className="text-sm font-bold">
                     {item.title.split(' ').map((word, index) => (
                       <div key={index}>{word}</div>
                     ))}
                   </div>
-                  </Link>
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -66,5 +84,27 @@ export default function page() {
         </section>
       </div>
     </main>
+
+      <ChoicePopup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)}>
+        {selectedItem && (
+          <div className="text-center">
+            <h2 className="text-lg font-bold">Konfirmasi</h2>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+              Anda akan melihat detail tentang "{selectedItem.title}". Lanjutkan?
+            </p>
+            <div className="mt-6 flex justify-end gap-4">
+              <Button onClick={() => setIsPopupOpen(false)}>
+                Batal
+              </Button>
+              <a href={selectedItem.linkto}>
+                <Button>
+                  Lanjutkan
+                </Button>
+              </a>
+            </div>
+          </div>
+        )}
+      </ChoicePopup>
+      </>
   );
 }

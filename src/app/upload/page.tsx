@@ -63,19 +63,25 @@ export default function UploadBudayaPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left: Upload Foto */}
-          <div className="flex flex-col items-center justify-center border border-gray-300 rounded-lg h-[250px]">
-            {preview ? (
-              <img src={preview} alt="Preview" className="h-full object-contain" />
-            ) : (
-              <span className="text-gray-500">insert photo</span>
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              className="mt-2 text-sm"
-            />
-          </div>
+            <div className="flex flex-col items-center justify-between  h-[300px] p-4">
+                <div className="flex-1 flex items-center justify-center w-full border border-gray-300 rounded-lg">
+                    {preview ? (
+                    <img src={preview} alt="Preview" className="h-full object-contain rounded" />
+                    ) : (
+                    <span className="text-gray-500">insert photo</span>
+                    )}
+                </div>
+                <label className="mt-4 cursor-pointer text-[#392514] border border-[#392514] rounded px-3 py-1 text-sm hover:bg-[#eee] transition">
+                    Pilih File
+                    <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                    />
+                </label>
+            </div>
+
 
           {/* Right: Form */}
           <div className="space-y-4">

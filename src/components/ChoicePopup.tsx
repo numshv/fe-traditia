@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react'; // Impor ikon untuk tombol close
+import { Button } from './Button';
 
 // Definisikan tipe untuk properti lagu
 interface Song {
@@ -11,14 +12,15 @@ interface Song {
   audioSrc: string; // URL ke file MP3
 }
 
-// UBAH: Hilangkan `children` karena konten sekarang spesifik untuk lagu
-interface MusicPopupProps {
+interface ChoicePopupProps {
   isOpen: boolean;
   onClose: () => void;
+  title: string;
+  data: any[]; 
+  isLoading: boolean;
 }
 
-const ChoicePopup: React.FC<MusicPopupProps> = ({ isOpen, onClose }) => {
-  // BARU: Data dummy untuk daftar lagu
+const ChoicePopup: React.FC<ChoicePopupProps> = ({ isOpen, onClose, title, data, isLoading }) => {
   const dummySongs: Song[] = [
     { title: "Bungong Jeumpa", artist: "Aceh", audioSrc: "/path/to/song1.mp3" },
     { title: "Butet", artist: "Sumatera Utara", audioSrc: "/path/to/song2.mp3" },
@@ -48,40 +50,37 @@ const ChoicePopup: React.FC<MusicPopupProps> = ({ isOpen, onClose }) => {
   }
 
   return createPortal(
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      onClick={onClose} 
-    >
-      {/* UBAH: Ukuran popup dibuat lebih tinggi dan lebar */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
       <div
-        className="relative flex flex-col w-full max-w-xl h-[80vh] rounded-lg bg-white p-6 shadow-xl dark:bg-slate-900"
+        className="relative w-full max-w-lg rounded-lg bg-white p-6 shadow-xl dark:bg-slate-900 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* BARU: Header untuk popup */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Lagu Tradisional</h2>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
-            <X className="h-5 w-5" />
-          </button>
+        <h2 className="text-xl font-bold mb-4">{title}</h2>
+        <div className="overflow-y-auto flex-1">
+          {isLoading ? (
+            <p>Loading data...</p>
+          ) : (
+            <ul className="space-y-4">
+              {data.length > 0 ? data.map((item) => (
+                <li key={item.id} className="border-b pb-2">
+                  <p className="font-semibold">{item.name}</p>
+                  {/* Contoh render kondisional jika item adalah lagu */}
+                  {item.audioSrc && (
+                    <audio controls className="w-full mt-2">
+                      <source src={item.audioSrc} type="audio/mpeg" />
+                    </audio>
+                  )}
+                  {/* Contoh render kondisional jika item adalah gambar */}
+                   {item.imageUrl && (
+                    <img src={item.imageUrl} alt={item.name} className="w-full h-auto mt-2 rounded" />
+                  )}
+                </li>
+              )) : <p>Tidak ada data ditemukan.</p>}
+            </ul>
+          )}
         </div>
-
-        {/* BARU: Kontainer slider/carousel horizontal yang scrollable */}
-        <div className="flex-1 overflow-x-auto snap-x snap-mandatory scroll-smooth flex">
-          {dummySongs.map((song, index) => (
-            <div key={index} className="flex-shrink-0 w-full h-full snap-center flex flex-col items-center justify-center p-4">
-              <div className="w-full max-w-sm">
-                <div className="aspect-square w-full bg-gray-200 dark:bg-slate-800 rounded-lg mb-4">
-                  {/* Anda bisa menaruh gambar album di sini */}
-                </div>
-                <h3 className="text-lg font-semibold">{song.title}</h3>
-                <p className="text-sm text-slate-500">{song.artist}</p>
-                <audio controls className="w-full mt-4">
-                  <source src={song.audioSrc} type="audio/mpeg" />
-                  Browser Anda tidak mendukung elemen audio.
-                </audio>
-              </div>
-            </div>
-          ))}
+        <div className="mt-6 flex justify-end">
+           <Button onClick={onClose}>Tutup</Button>
         </div>
       </div>
     </div>,

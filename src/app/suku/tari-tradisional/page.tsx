@@ -9,7 +9,7 @@ const imageUrls = [
   "https://images.pexels.com/photos/2016121/pexels-photo-2016121.jpeg",
 ]; 
 
-export default function TariTideTidePage() {
+export default function TariTideTidePage(id: string) {
   const [startIndex, setStartIndex] = useState(0);
 
   const handlePrev = () => {
@@ -22,7 +22,7 @@ export default function TariTideTidePage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto text-[#2a1e14] bg-[#f8f9f2] min-h-screen">
-      <h1 className="text-3xl font-bold mb-4">Tari Tide Tide</h1>
+      <h1 className="text-3xl font-bold mb-4 text-black">Tari Tide Tide</h1>
       <p className="mb-1">
         <strong>Asal Suku:</strong> Suku Ambon
       </p>

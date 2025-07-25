@@ -133,7 +133,7 @@ export default function ceritaPage() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="absolute top-0 left-0 right-0 bottom-0 grid grid-cols-2 gap-4 p-6 text-justify"
+              className="absolute top-0 left-0 right-0 bottom-0 grid grid-cols-2 gap-4 p-6 text-justify text-black"
             >
               {pages[pageIndex].map((para, idx) => (
                 <div key={idx} className="p-4">

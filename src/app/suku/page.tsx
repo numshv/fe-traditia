@@ -103,11 +103,17 @@ export default function page() {
 
       <div className="mt-12 grid grid-cols-3 gap-12">
         <aside className="md:col-span-1 flex flex-col items-center gap-8">
-          {/* Placeholder untuk gambar utama */}
-          <div className="w-full max-w-sm aspect-square border-2 border-current rounded-lg" />
+          <img
+            src="/ambon.png"
+            alt="Suku Ambon"
+            className="w-full max-w-sm aspect-square object-cover border-2 border-current rounded-lg"
+          />
 
-          {/* Placeholder untuk gambar peta */}
-          <div className="w-4/5 h-48 bg-current opacity-20" />
+          <img
+            src="/maluku.png"
+            alt="Maluku Tengah"
+            className="w-4/5 h-48 bg-current opacity-20"
+          />
           <p className="text-lg">Maluku Tengah</p>
         </aside>
 

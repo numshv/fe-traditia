@@ -1,5 +1,6 @@
 'use client';
 
+import { userAgent } from 'next/server';
 import { useState } from 'react';
 
 export default function UploadBudayaPage() {
@@ -10,6 +11,8 @@ export default function UploadBudayaPage() {
     kategori: '',
     suku: '',
     deskripsi: '',
+    image: '',
+    userId: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -24,13 +27,33 @@ export default function UploadBudayaPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    let imageUrl = '';
+    if (photo) {
+        imageUrl = await uploadImageToCloudinary(photo);
+    }
+    const userId = '1'; // DUMMY blm ada session manager
+    const formData = { ...form, image: imageUrl, userId };
+
     // TODO: Upload to backend
-    console.log('Form:', form);
-    console.log('Photo:', photo);
+    console.log('Form:', formData);
   };
+
+    const uploadImageToCloudinary = async (file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!);
+
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await res.json();
+        return data.secure_url;
+    };
 
   return (
     <div className="min-h-screen bg-[#f6f7ec] font-serif px-4 py-10 md:px-20">

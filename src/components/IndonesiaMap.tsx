@@ -202,7 +202,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
         </div>
       </div>
     );
-  }
+  }     
 
   return (
     <div className={`w-full flex h-full text-white ${selectedGeoFeature ? "flex-row" : ""}`}>
@@ -215,6 +215,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
           scrollWheelZoom={false}
           doubleClickZoom={false}
           attributionControl={false}
+          style={{ height: '100%', width: '100%' }} 
         >
           {geoData && (
             <ZoomableGeoJSON

@@ -17,7 +17,7 @@ export default function Home() {
   const [isMapFocused, setIsMapFocused] = useState(false);
   return (
     <main className="h-screen w-full relative font-serif p-8">
-      <section className="absolute inset-0 z-10">
+      <section className="absolute inset-0 z-10 h-full">
         <Map onFocusChange={setIsMapFocused} /> 
       </section>
       <section className={`

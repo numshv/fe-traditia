@@ -26,13 +26,13 @@ export default function Home() {
         ${isMapFocused ? 'opacity-0' : 'opacity-100'}
       `}>
         <div className="pointer-events-auto">
-          <h1 className="text-3xl font-medium">
+          <h1 className="text-3xl font-medium text-#392514">
             Temukan Kekayaan Budaya, Mulai dari Sini
           </h1>
-          <div className="w-full max-w-lg mt-2">
+          <div className="w-full max-w-lg mt-2 text-#392514">
             <InputField placeholder="Ketik pencarian Anda..." />
           </div>
-          <p className="mt-2 text-sm">
+          <p className="mt-2 text-sm text-#392514">
             atau... klik peta dan jelajahi keragaman budaya Indonesia
           </p>
         </div>

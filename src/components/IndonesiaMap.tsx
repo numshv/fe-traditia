@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from "react";
-import { MapContainer, GeoJSON, useMap } from "react-leaflet";
+import { MapContainer, GeoJSON, useMap, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import type { FeatureCollection, Feature } from "geojson";
@@ -217,6 +217,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
           attributionControl={false}
           style={{ height: '100%', width: '100%' }} 
         >
+          <TileLayer url="" />
           {geoData && (
             <ZoomableGeoJSON
               data={geoData}
@@ -238,7 +239,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
               setSelectedGeoFeature(null);
               setSelectedLayer(null);
             }}
-            className="absolute top-8 right-8 z-10 text-current text-2xl font-bold hover:opacity-70 transition-opacity"
+            className="absolute top-8 right-8 z-10 text-black text-2xl font-bold hover:opacity-70 transition-opacity to-black"
             title="Close"
           >&times;</button>
 

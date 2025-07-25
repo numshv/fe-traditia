@@ -32,7 +32,7 @@ export default function Home() {
           <div className="w-full max-w-lg mt-2 text-[#392514]">
             <InputField placeholder="Ketik pencarian Anda..." />
           </div>
-          <p className="mt-2 text-sm text-#392514">
+          <p className="mt-2 text-sm text-[#392514]">
             atau... klik peta dan jelajahi keragaman budaya Indonesia
           </p>
         </div>

@@ -56,12 +56,12 @@ interface IndonesiaMapProps {
 
 interface Suku {
   name: string;
-  imageUrl: string; // Asumsi API memberikan URL gambar
+  imageUrl: string; 
 }
 
 interface Landmark {
   name: string;
-  imageUrl: string; // Asumsi API memberikan URL gambar
+  imageUrl: string; 
 }
 
 export default function IndonesiaMap({ onProvinceStats, onFocusChange }: IndonesiaMapProps) {
@@ -74,7 +74,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
   const [sukuData, setSukuData] = useState<Suku[]>([]);
   const [isSukuLoading, setIsSukuLoading] = useState(false);
 
-  const [landmark, setlandmark] = useState<Suku[]>([]);
+  const [landmark, setlandmark] = useState<Landmark[]>([]);
   const [isLandmarkLoading, setIsLandmarkLoading] = useState(false);
 
   const [openAccordion, setOpenAccordion] = useState<'suku' | 'landmark'>('suku');
@@ -115,14 +115,12 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
   const handleProvinceClick = async (feature: Feature, layer: L.Layer) => {
     const provinceName = (feature.properties as ProvinceProperties)?.state;
     
-    // Kembalikan layer yang dipilih sebelumnya ke warna hitam
     if (selectedLayer && selectedLayer !== layer) {
       (selectedLayer as L.Path).setStyle({ fillColor: "#000000", weight: 1, color: "#555" });
     }
     
-    // UBAH: Warna highlight saat provinsi di klik
     (layer as L.Path).setStyle({
-      fillColor: "#333333", // Warna abu-abu gelap saat dipilih
+      fillColor: "#333333", 
       color: "#FFFFFF",
       weight: 3,
     });
@@ -136,19 +134,15 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
       try {
         const encodedProvinceName = encodeURIComponent(provinceName);
         
-        // Siapkan kedua promise fetch
         const sukuPromise = fetch(`/api/provinces/${encodedProvinceName}/suku`);
         const landmarkPromise = fetch(`/api/provinces/${encodedProvinceName}/landmark`);
 
-        // Jalankan keduanya secara paralel dan tunggu hasilnya
         const [sukuResponse, landmarkResponse] = await Promise.all([sukuPromise, landmarkPromise]);
 
-        // Proses hasil Suku
         const sukuResult = await sukuResponse.json();
         if (!sukuResponse.ok) throw new Error(sukuResult.message || 'Gagal mengambil data suku');
         setSukuData(sukuResult.data);
 
-        // Proses hasil Landmark
         const landmarkResult = await landmarkResponse.json();
         if (!landmarkResponse.ok) throw new Error(landmarkResult.message || 'Gagal mengambil data landmark');
         setlandmark(landmarkResult.data);
@@ -172,23 +166,20 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
       mouseover: (e) => {
         const targetLayer = e.target as L.Path;
         if (targetLayer !== selectedLayer) {
-          // UBAH: Warna highlight saat hover
           targetLayer.setStyle({ weight: 2, fillColor: '#222222' });
         }
       },
       mouseout: (e) => {
         const targetLayer = e.target as L.Path;
         if (targetLayer !== selectedLayer) {
-          // UBAH: Kembalikan ke style awal (hitam)
           targetLayer.setStyle({ color: "#555", fillColor: "#000000", weight: 1 });
         }
       }
     });
 
-    // UBAH: Warna default provinsi menjadi hitam
     (layer as L.Path).setStyle({
-      color: "#555",      // Warna border abu-abu gelap
-      fillColor: "#000000", // Warna isian hitam
+      color: "#555",      
+      fillColor: "#000000",
       fillOpacity: 1,
       weight: 1,
     });
@@ -197,12 +188,6 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
       layer.bindTooltip(provinceName, { permanent: false, direction: "center" });
     }
   };
-
-  // useEffect(() => {
-  //   fetchGeoData();
-  // }, []);
-  
-  // if (isLoading) { return ( /* ... kode loading state tetap sama ... */ ); }
 
   useEffect(() => {
     fetchGeoData();
@@ -219,14 +204,12 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
     );
   }
 
-  // UBAH: Menghapus `bg-black` dari div terluar agar menjadi transparan
   return (
     <div className={`w-full flex h-full text-white ${selectedGeoFeature ? "flex-row" : ""}`}>
       <div className={`${selectedGeoFeature ? "w-2/3 relative" : "w-full"} h-full transition-all duration-500`}>
         <MapContainer
           center={[-2, 118]}
           zoom={5}
-          style={{ height: "100%", width: "100%", background: 'transparent' }} // UBAH: Background map transparan
           zoomControl={false}
           dragging={false}
           scrollWheelZoom={false}
@@ -262,9 +245,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
             {(selectedGeoFeature.properties as ProvinceProperties)?.state || "Provinsi"}
           </h1>
 
-          {/* Implementasi Accordion manual */}
           <div className="w-full flex flex-col gap-4">
-            {/* Accordion Item: Suku */}
             <div className="border border-black px-4 rounded-sm">
               <button
                 onClick={() => handleAccordionClick('suku')}
@@ -291,7 +272,6 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
               </div>
             </div>
 
-            {/* Accordion Item: Landmark */}
             <div className="border border-black px-4 rounded-sm">
               <button
                 onClick={() => handleAccordionClick('landmark')}

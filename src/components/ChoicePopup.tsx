@@ -2,14 +2,12 @@
 
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react'; // Impor ikon untuk tombol close
+import { X } from 'lucide-react'; 
 import { Button } from './Button';
 
-// Definisikan tipe untuk properti lagu
 interface Song {
   title: string;
   artist: string;
-  audioSrc: string; // URL ke file MP3
 }
 
 interface ChoicePopupProps {
@@ -22,11 +20,11 @@ interface ChoicePopupProps {
 
 const ChoicePopup: React.FC<ChoicePopupProps> = ({ isOpen, onClose, title, data, isLoading }) => {
   const dummySongs: Song[] = [
-    { title: "Bungong Jeumpa", artist: "Aceh", audioSrc: "/path/to/song1.mp3" },
-    { title: "Butet", artist: "Sumatera Utara", audioSrc: "/path/to/song2.mp3" },
-    { title: "Soleram", artist: "Riau", audioSrc: "/path/to/song3.mp3" },
-    { title: "Apuse", artist: "Papua", audioSrc: "/path/to/song4.mp3" },
-    { title: "Yamko Rambe Yamko", artist: "Papua", audioSrc: "/path/to/song5.mp3" },
+    { title: "Bungong Jeumpa", artist: "Aceh",  },
+    { title: "Butet", artist: "Sumatera Utara" },
+    { title: "Soleram", artist: "Riau" },
+    { title: "Apuse", artist: "Papua" },
+    { title: "Yamko Rambe Yamko", artist: "Papua" },
   ];
 
   React.useEffect(() => {
@@ -64,13 +62,11 @@ const ChoicePopup: React.FC<ChoicePopupProps> = ({ isOpen, onClose, title, data,
               {data.length > 0 ? data.map((item) => (
                 <li key={item.id} className="border-b pb-2">
                   <p className="font-semibold">{item.name}</p>
-                  {/* Contoh render kondisional jika item adalah lagu */}
                   {item.audioSrc && (
                     <audio controls className="w-full mt-2">
                       <source src={item.audioSrc} type="audio/mpeg" />
                     </audio>
                   )}
-                  {/* Contoh render kondisional jika item adalah gambar */}
                    {item.imageUrl && (
                     <img src={item.imageUrl} alt={item.name} className="w-full h-auto mt-2 rounded" />
                   )}

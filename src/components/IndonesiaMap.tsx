@@ -54,12 +54,28 @@ interface IndonesiaMapProps {
   onFocusChange?: (isFocused: boolean) => void;
 }
 
+interface Suku {
+  name: string;
+  imageUrl: string; 
+}
+
+interface Landmark {
+  name: string;
+  imageUrl: string; 
+}
+
 export default function IndonesiaMap({ onProvinceStats, onFocusChange }: IndonesiaMapProps) {
   const [geoData, setGeoData] = useState<FeatureCollection | null>(null);
   const geoJsonRef = useRef<L.GeoJSON | null>(null);
   const [selectedGeoFeature, setSelectedGeoFeature] = useState<Feature | null>(null);
   const [selectedLayer, setSelectedLayer] = useState<L.Layer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [sukuData, setSukuData] = useState<Suku[]>([]);
+  const [isSukuLoading, setIsSukuLoading] = useState(false);
+
+  const [landmark, setlandmark] = useState<Landmark[]>([]);
+  const [isLandmarkLoading, setIsLandmarkLoading] = useState(false);
 
   const [openAccordion, setOpenAccordion] = useState<'suku' | 'landmark'>('suku');
 
@@ -99,14 +115,12 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
   const handleProvinceClick = async (feature: Feature, layer: L.Layer) => {
     const provinceName = (feature.properties as ProvinceProperties)?.state;
     
-    // Kembalikan layer yang dipilih sebelumnya ke warna hitam
     if (selectedLayer && selectedLayer !== layer) {
       (selectedLayer as L.Path).setStyle({ fillColor: "#000000", weight: 1, color: "#555" });
     }
     
-    // UBAH: Warna highlight saat provinsi di klik
     (layer as L.Path).setStyle({
-      fillColor: "#333333", // Warna abu-abu gelap saat dipilih
+      fillColor: "#333333", 
       color: "#FFFFFF",
       weight: 3,
     });
@@ -114,8 +128,33 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
     setSelectedLayer(layer);
     setSelectedGeoFeature(feature);
 
-    if (onProvinceStats) {
-      onProvinceStats({ areaName: provinceName, areaCommodity: [] });
+    if (provinceName) {
+      setIsSukuLoading(true);
+      setIsLandmarkLoading(true);
+      try {
+        const encodedProvinceName = encodeURIComponent(provinceName);
+        
+        const sukuPromise = fetch(`/api/provinces/${encodedProvinceName}/suku`);
+        const landmarkPromise = fetch(`/api/provinces/${encodedProvinceName}/landmark`);
+
+        const [sukuResponse, landmarkResponse] = await Promise.all([sukuPromise, landmarkPromise]);
+
+        const sukuResult = await sukuResponse.json();
+        if (!sukuResponse.ok) throw new Error(sukuResult.message || 'Gagal mengambil data suku');
+        setSukuData(sukuResult.data);
+
+        const landmarkResult = await landmarkResponse.json();
+        if (!landmarkResponse.ok) throw new Error(landmarkResult.message || 'Gagal mengambil data landmark');
+        setlandmark(landmarkResult.data);
+
+      } catch (error) {
+        console.error("Error fetching province data:", error);
+        setSukuData([]);
+        setlandmark([]);
+      } finally {
+        setIsSukuLoading(false);
+        setIsLandmarkLoading(false);
+      }
     }
   };
 
@@ -127,23 +166,20 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
       mouseover: (e) => {
         const targetLayer = e.target as L.Path;
         if (targetLayer !== selectedLayer) {
-          // UBAH: Warna highlight saat hover
           targetLayer.setStyle({ weight: 2, fillColor: '#222222' });
         }
       },
       mouseout: (e) => {
         const targetLayer = e.target as L.Path;
         if (targetLayer !== selectedLayer) {
-          // UBAH: Kembalikan ke style awal (hitam)
           targetLayer.setStyle({ color: "#555", fillColor: "#000000", weight: 1 });
         }
       }
     });
 
-    // UBAH: Warna default provinsi menjadi hitam
     (layer as L.Path).setStyle({
-      color: "#555",      // Warna border abu-abu gelap
-      fillColor: "#000000", // Warna isian hitam
+      color: "#555",      
+      fillColor: "#000000",
       fillOpacity: 1,
       weight: 1,
     });
@@ -152,12 +188,6 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
       layer.bindTooltip(provinceName, { permanent: false, direction: "center" });
     }
   };
-
-  // useEffect(() => {
-  //   fetchGeoData();
-  // }, []);
-  
-  // if (isLoading) { return ( /* ... kode loading state tetap sama ... */ ); }
 
   useEffect(() => {
     fetchGeoData();
@@ -174,14 +204,12 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
     );
   }
 
-  // UBAH: Menghapus `bg-black` dari div terluar agar menjadi transparan
   return (
     <div className={`w-full flex h-full text-white ${selectedGeoFeature ? "flex-row" : ""}`}>
       <div className={`${selectedGeoFeature ? "w-2/3 relative" : "w-full"} h-full transition-all duration-500`}>
         <MapContainer
           center={[-2, 118]}
           zoom={5}
-          style={{ height: "100%", width: "100%", background: 'transparent' }} // UBAH: Background map transparan
           zoomControl={false}
           dragging={false}
           scrollWheelZoom={false}
@@ -217,9 +245,7 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
             {(selectedGeoFeature.properties as ProvinceProperties)?.state || "Provinsi"}
           </h1>
 
-          {/* Implementasi Accordion manual */}
           <div className="w-full flex flex-col gap-4">
-            {/* Accordion Item: Suku */}
             <div className="border border-black px-4 rounded-sm">
               <button
                 onClick={() => handleAccordionClick('suku')}
@@ -230,19 +256,22 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
               </button>
               <div className={`overflow-hidden transition-all duration-500 ease-in-out ${openAccordion === 'suku' ? 'max-h-[999px]' : 'max-h-0'}`}>
                 <div className="grid grid-cols-2 gap-4 py-4">
-                  {dummySukuData.map((suku) => (
-                    <div key={suku.name} className="relative aspect-video rounded-lg overflow-hidden group cursor-pointer">
-                      <img src="https://images.pexels.com/photos/2016121/pexels-photo-2016121.jpeg"></img>
-                      <div className="absolute bottom-0 left-0 p-3 bg-[#282828] rounded-lg w-full">
-                        <span className="text-white font-bold text-lg">{suku.name}</span>
+                  {isSukuLoading ? (
+                    <p>Loading data suku...</p>
+                  ) : (
+                    sukuData.map((suku) => (
+                      <div key={suku.name} className="relative aspect-video ...">
+                        <img src={suku.imageUrl} alt={suku.name} className="..." />
+                        <div className="absolute bottom-0 ...">
+                          <span className="...">{suku.name}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Accordion Item: Landmark */}
             <div className="border border-black px-4 rounded-sm">
               <button
                 onClick={() => handleAccordionClick('landmark')}
@@ -253,15 +282,18 @@ export default function IndonesiaMap({ onProvinceStats, onFocusChange }: Indones
               </button>
               <div className={`overflow-hidden transition-all duration-500 ease-in-out ${openAccordion === 'landmark' ? 'max-h-[999px]' : 'max-h-0'}`}>
                 <div className="grid grid-cols-2 gap-4 py-4">
-                  {dummyLandmarkData.map((landmark) => (
-                    <div key={landmark.name} className="relative aspect-video rounded-lg overflow-hidden group cursor-pointer">
-                      <div className="w-full h-full bg-gray-400 group-hover:scale-110 transition-transform duration-300" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute bottom-0 left-0 p-3">
-                        <span className="text-white font-bold text-lg">{landmark.name}</span>
+                  {isLandmarkLoading ? (
+                    <p>Loading data landmark...</p>
+                  ) : (
+                    landmark.map((landmark) => (
+                      <div key={landmark.name} className="relative aspect-video ...">
+                        <img src={landmark.imageUrl} alt={landmark.name} className="..." />
+                        <div className="absolute bottom-0 ...">
+                          <span className="...">{landmark.name}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
             </div>

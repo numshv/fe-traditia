@@ -1,8 +1,6 @@
-// app/tradisi/tari-tide-tide/page.tsx
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 
 const imageUrls = [
   "https://images.pexels.com/photos/2016121/pexels-photo-2016121.jpeg",

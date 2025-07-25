@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from "react";
 interface Person {
   id: number;
   name: string;
-  title: string;
   img: string;
 }
 
@@ -25,11 +24,11 @@ const Choices: React.FC = () => {
     const fetchPersons = async () => {
       try {
         const dummyData: Person[] = [
-          { id: 1, name: "Aurora", title: "Lead Vocalist", img: "https://images.pexels.com/photos/7414283/pexels-photo-7414283.jpeg" },
-          { id: 2, name: "Leo", title: "Guitarist", img: "https://images.pexels.com/photos/7414283/pexels-photo-7414283.jpeg" },
-          { id: 3, name: "Mia", title: "Bassist", img: "https://images.pexels.com/photos/7414283/pexels-photo-7414283.jpeg" },
-          { id: 4, name: "Kai", title: "Drummer", img: "https://images.pexels.com/photos/7414283/pexels-photo-7414283.jpeg" },
-          { id: 5, name: "Zoe", title: "Keyboardist", img: "https://images.pexels.com/photos/7414283/pexels-photo-7414283.jpeg" },
+          { id: 1, name: "Tortor", img: "https://images.pexels.com/photos/7414283/pexels-photo-7414283.jpeg" },
+          { id: 2, name: "Tortor", img: "https://images.pexels.com/photos/7414283/pexels-photo-7414283.jpeg" },
+          { id: 3, name: "Tor Tor",  img: "https://images.pexels.com/photos/7414283/pexels-photo-7414283.jpeg" },
+          { id: 4, name: "Tor-Tor",  img: "https://images.pexels.com/photos/7414283/pexels-photo-7414283.jpeg" },
+          { id: 5, name: "TorTor", img: "https://images.pexels.com/photos/7414283/pexels-photo-7414283.jpeg" },
         ];
         
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -45,7 +44,6 @@ const Choices: React.FC = () => {
     fetchPersons();
   }, []);
 
-  // useEffect untuk menangani animasi transisi
   useEffect(() => {
     if (!wrapperRef.current) return;
     if (timeoutRef.current) {
@@ -88,7 +86,6 @@ const Choices: React.FC = () => {
           } else if (isActive) {
             stateClasses = "md:w-[48%]";
           } else {
-            // Gaya hover hanya berlaku untuk item yang tidak aktif
             stateClasses = "md:w-[8%] md:hover:w-[12%] md:[&:not(:hover)]:group-hover:w-[7%]";
           }
 
@@ -122,7 +119,6 @@ const Choices: React.FC = () => {
                   />
                   
                   <div className={textClasses}>
-                    <p className="text-sm uppercase text-primary md:text-lg">{person.title}</p>
                     <p className="text-lg font-bold text-black md:text-4xl">{person.name}</p>
                   </div>
 

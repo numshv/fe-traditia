@@ -12,13 +12,25 @@ import {
   Palmtree
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface IconDataItem {
   title: string;
   linkto: string;
   Icon: React.ElementType;
 }
+
+interface SukuPageData{
+  id: string;
+  name: string;
+  desc: string;
+  region_id: string;
+}
+
+type PopupDataItem = {
+  id: number;
+  name: string;
+};
 
 export default function page() {
   const iconData = [
@@ -31,13 +43,59 @@ export default function page() {
     { title: "Tradisi", linkto: "suku/tradisi", Icon: Palmtree },
   ];
 
+  const [sukuData, setSukuData] = useState<SukuPageData | null>(null);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<IconDataItem | null>(null);
+  const [popupData, setPopupData] = useState<PopupDataItem[]>([]);
+  const [isPopupLoading, setIsPopupLoading] = useState(false);
 
-  const handleIconClick = (item: IconDataItem) => {
+  useEffect(() => {
+    const fetchSukuData = async () => {
+      try {
+        // Ganti "Ambon" dengan nama suku yang dinamis jika perlu
+        const response = await fetch('/api/suku/Ambon');
+        const data = await response.json();
+        setSukuData(data);
+      } catch (error) {
+        console.error("Gagal mengambil data suku:", error);
+        // Fallback jika API gagal
+        setSukuData({
+          id: "gs52",
+          name: "Suku Ambon",
+          desc: "Deskripsi Suku Ambon...",
+          region_id: "R-22"
+        });
+      } finally {
+        setIsPageLoading(false);
+      }
+    };
+    fetchSukuData();
+  }, []);
+
+  // 2. API call saat ikon "Lihat lebih jauh" diklik
+  const handleIconClick = async (item: IconDataItem) => {
     setSelectedItem(item);
     setIsPopupOpen(true);
+    setIsPopupLoading(true);
+    try {
+      // Ganti "Ambon" dengan nama suku dinamis dari state sukuData
+      const sukuName = sukuData?.name || 'Ambon';
+      const response = await fetch(`/api/suku/${sukuName}/${item.linkto}`);
+      const result = await response.json();
+      setPopupData(result.data);
+    } catch (error) {
+      console.error(`Gagal mengambil data untuk ${item.title}:`, error);
+      setPopupData([]); // Kosongkan data jika error
+    } finally {
+      setIsPopupLoading(false);
+    }
   };
+
+  if (isPageLoading) {
+    return <div className="text-center p-20">Loading...</div>;
+  }
 
   return (
     <>
@@ -85,26 +143,13 @@ export default function page() {
       </div>
     </main>
 
-      <ChoicePopup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)}>
-        {selectedItem && (
-          <div className="text-center">
-            <h2 className="text-lg font-bold">Konfirmasi</h2>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-              Anda akan melihat detail tentang "{selectedItem.title}". Lanjutkan?
-            </p>
-            <div className="mt-6 flex justify-end gap-4">
-              <Button onClick={() => setIsPopupOpen(false)}>
-                Batal
-              </Button>
-              <a href={selectedItem.linkto}>
-                <Button>
-                  Lanjutkan
-                </Button>
-              </a>
-            </div>
-          </div>
-        )}
-      </ChoicePopup>
+      <ChoicePopup
+        isOpen={isPopupOpen}
+        onClose={() => setIsPopupOpen(false)}
+        title={selectedItem?.title || ''}
+        data={popupData}
+        isLoading={isPopupLoading}
+      />
       </>
   );
 }
